@@ -16,6 +16,7 @@ class FaultInjection:
         batch_size: int,
         input_shape: List[int] = None,
         layer_types=None,
+        llm=False,
         **kwargs,
     ):
         if not input_shape:
@@ -23,6 +24,9 @@ class FaultInjection:
         if not layer_types:
             layer_types = [nn.Conv2d]
         logging.basicConfig(format="%(asctime)-15s %(clientip)s %(user)-8s %(message)s")
+
+        if llm:
+            model, self.tokenizer = model
 
         self.original_model = model
         self.output_size = []
@@ -55,12 +59,16 @@ class FaultInjection:
             self.original_model, self._inj_layer_types
         )
 
-        dummy_shape = (1, *self._input_shape)  # profiling only needs one batch element
         model_dtype = next(model.parameters()).dtype
         device = "cuda" if self.use_cuda else None
-        _dummy_tensor = torch.randn(dummy_shape, dtype=model_dtype, device=device)
+        dummy_shape = (1, *self._input_shape)  # profiling only needs one batch element
 
-        self.original_model(_dummy_tensor)
+        if llm:
+            _dummy_tensor = torch.randint(low=0, high=self.tokenizer.vocab_size, size=dummy_shape)
+            self.original_model(input_ids=_dummy_tensor)
+        else:
+            _dummy_tensor = torch.randn(dummy_shape, dtype=model_dtype, device=device)
+            self.original_model(_dummy_tensor)
 
         for index, _handle in enumerate(handles):
             handles[index].remove()

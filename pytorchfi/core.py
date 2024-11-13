@@ -112,6 +112,12 @@ class FaultInjection:
             if list(layer.children()) == []:
                 if "all" in layer_types:
                     handles.append(layer.register_forward_hook(self._save_output_size))
+
+                    weights_shape.append(
+                        layer.weight.shape if
+                        any(param.requires_grad for param in layer.parameters())
+                        else None
+                    )
                 else:
                     for i in layer_types:
                         if isinstance(layer, i):
@@ -440,7 +446,7 @@ class FaultInjection:
                 "----------------------------------------------------------------------------------"
                 + "\n"
         )
-        line_new = "{:>5}  {:>15}  {:>10} {:>20} {:>20}".format(
+        line_new = "{:>5}  {:>20}  {:>10} {:>20} {:>20}".format(
             "Layer #", "Layer type", "Dimensions", "Weight Shape", "Output Shape"
         )
         summary_str += line_new + "\n"
@@ -449,11 +455,12 @@ class FaultInjection:
                 + "\n"
         )
         for layer, _dim in enumerate(self.output_size):
-            line_new = "{:>5}  {:>15}  {:>10} {:>20} {:>20}".format(
+            weight_shape = list(self.weights_size[layer]) if self.weights_size[layer] else None
+            line_new = "{:>5}  {:>20}  {:>10} {:>20} {:>20}".format(
                 layer,
                 str(self.layers_type[layer]).split(".")[-1].split("'")[0],
                 str(self.layers_dim[layer]),
-                str(list(self.weights_size[layer])),
+                str(weight_shape),
                 str(self.output_size[layer]),
             )
             summary_str += line_new + "\n"

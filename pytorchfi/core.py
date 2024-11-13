@@ -25,9 +25,6 @@ class FaultInjection:
             layer_types = [nn.Conv2d]
         logging.basicConfig(format="%(asctime)-15s %(clientip)s %(user)-8s %(message)s")
 
-        if llm:
-            model, self.tokenizer = model
-
         self.original_model = model
         self.output_size = []
         self.layers_type = []
@@ -64,7 +61,7 @@ class FaultInjection:
         dummy_shape = (1, *self._input_shape)  # profiling only needs one batch element
 
         if llm:
-            _dummy_tensor = torch.randint(low=0, high=self.tokenizer.vocab_size, size=dummy_shape)
+            _dummy_tensor = torch.randint(low=0, high=500, size=dummy_shape)    # Assumes vocab size of at least 500
             self.original_model(input_ids=_dummy_tensor)
         else:
             _dummy_tensor = torch.randn(dummy_shape, dtype=model_dtype, device=device)

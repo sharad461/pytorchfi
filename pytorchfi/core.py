@@ -11,13 +11,13 @@ import torch.nn as nn
 
 class FaultInjection:
     def __init__(
-        self,
-        model,
-        batch_size: int,
-        input_shape: List[int] = None,
-        layer_types=None,
-        llm=False,
-        **kwargs,
+            self,
+            model,
+            batch_size: int,
+            input_shape: List[int] = None,
+            layer_types=None,
+            llm=False,
+            **kwargs,
     ):
         if not input_shape:
             input_shape = [3, 224, 224]
@@ -273,10 +273,10 @@ class FaultInjection:
 
     def check_bounds(self, batch, layer, dim):
         if (
-            len(batch) != len(layer)
-            or len(batch) != len(dim[0])
-            or len(batch) != len(dim[1])
-            or len(batch) != len(dim[2])
+                len(batch) != len(layer)
+                or len(batch) != len(dim[0])
+                or len(batch) != len(dim[1])
+                or len(batch) != len(dim[2])
         ):
             raise AssertionError("Injection location missing values.")
 
@@ -308,8 +308,8 @@ class FaultInjection:
                 )
 
         if layer_dim <= 2 and (
-            self.corrupt_dim[1][index] is not None
-            or self.corrupt_dim[2][index] is not None
+                self.corrupt_dim[1][index] is not None
+                or self.corrupt_dim[2][index] is not None
         ):
             warnings.warn(
                 f"Values in Dim2 and Dim3 ignored, since layer is {layer_type}"
@@ -406,14 +406,14 @@ class FaultInjection:
 
     def print_pytorchfi_layer_summary(self):
         summary_str = (
-            "============================ PYTORCHFI INIT SUMMARY =============================="
-            + "\n\n"
+                "============================ PYTORCHFI INIT SUMMARY =============================="
+                + "\n\n"
         )
 
         summary_str += "Layer types allowing injections:\n"
         summary_str += (
-            "----------------------------------------------------------------------------------"
-            + "\n"
+                "----------------------------------------------------------------------------------"
+                + "\n"
         )
         for l_type in self._inj_layer_types:
             summary_str += "{:>5}".format("- ")
@@ -423,8 +423,8 @@ class FaultInjection:
 
         summary_str += "Model Info:\n"
         summary_str += (
-            "----------------------------------------------------------------------------------"
-            + "\n"
+                "----------------------------------------------------------------------------------"
+                + "\n"
         )
 
         summary_str += "   - Shape of input into the model: ("
@@ -437,16 +437,16 @@ class FaultInjection:
 
         summary_str += "Layer Info:\n"
         summary_str += (
-            "----------------------------------------------------------------------------------"
-            + "\n"
+                "----------------------------------------------------------------------------------"
+                + "\n"
         )
         line_new = "{:>5}  {:>15}  {:>10} {:>20} {:>20}".format(
             "Layer #", "Layer type", "Dimensions", "Weight Shape", "Output Shape"
         )
         summary_str += line_new + "\n"
         summary_str += (
-            "----------------------------------------------------------------------------------"
-            + "\n"
+                "----------------------------------------------------------------------------------"
+                + "\n"
         )
         for layer, _dim in enumerate(self.output_size):
             line_new = "{:>5}  {:>15}  {:>10} {:>20} {:>20}".format(
@@ -459,8 +459,8 @@ class FaultInjection:
             summary_str += line_new + "\n"
 
         summary_str += (
-            "=================================================================================="
-            + "\n"
+                "=================================================================================="
+                + "\n"
         )
 
         logging.info(summary_str)

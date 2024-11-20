@@ -61,7 +61,7 @@ class FaultInjection:
         dummy_shape = (1, *self._input_shape)  # profiling only needs one batch element
 
         if llm:
-            _dummy_tensor = torch.randint(low=0, high=500, size=dummy_shape)    # Assumes vocab size of at least 500
+            _dummy_tensor = torch.randint(low=0, high=500, size=dummy_shape, device=device)    # Assumes vocab size of at least 500
             self.original_model(input_ids=_dummy_tensor)
         else:
             _dummy_tensor = torch.randn(dummy_shape, dtype=model_dtype, device=device)
